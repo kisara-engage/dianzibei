@@ -1,0 +1,19 @@
+# 可选依赖 —— 程序不装这些也能完整运行
+#
+# 本项目核心功能只用 Python 标准库（http.server / urllib / sqlite3 / zipfile），
+# 以下依赖装了会更好，没装会自动降级：
+#
+#   flask       -> 没装时用内置 http.server（功能一致）
+#   jieba       -> 没装时用 1~2 元组切分（检索质量略降）
+#   PyYAML      -> 没装时用内置极简 YAML 解析器
+#   pdfplumber  -> 只有要读 PDF 文档时才需要
+#
+# 想装就在命令行执行：
+#     pip install -r requirements.txt
+#
+# 如果网络连不上 pypi，可以完全不装，直接运行。
+
+flask>=3.0
+jieba>=0.42
+PyYAML>=6.0
+pdfplumber>=0.11

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多模态数据驱动可解释问数/问答智能体</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark">◈</span>
+      <div>
+        <h1>可解释问数 / 问答智能体</h1>
+        <p class="sub">结构化数据库 + 非结构化知识库 · 全链路可溯源</p>
+      </div>
+    </div>
+    <div class="meta">
+      <span>表 <b>{{ tables }}</b></span>
+      <span>文档 <b>{{ docs }}</b></span>
+      <span>片段 <b>{{ chunks }}</b></span>
+      <span class="model">{{ model }}</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="ask-box">
+    <div class="input-row">
+      <input id="q" placeholder="例如：2024年销售冠军是谁？请结合知识库总结他的成功方法论。" autocomplete="off">
+      <button id="go">提问</button>
+    </div>
+    <div class="samples">
+      <span>示例：</span>
+      <button class="chip" data-q="数据库里一共有多少首歌曲？">单表计数</button>
+      <button class="chip" data-q="哪个音乐流派的歌曲数量最多？">聚合查询</button>
+      <button class="chip" data-q="按发票金额统计，销售额最高的三个国家是哪些？">多表关联</button>
+      <button class="chip" data-q="公司对P0级故障的响应时效要求是多少？">文档问答</button>
+      <button class="chip" data-q="2024年销售冠军是谁？请结合知识库总结他的成功方法论。">跨源多跳</button>
+      <button class="chip" data-q="帮我看看增长情况">模糊问题（触发澄清）</button>
+    </div>
+  </section>
+
+  <div id="status" class="status hidden"></div>
+
+  <section id="result" class="result hidden">
+    <div class="answer-card">
+      <div class="card-head">
+        <h2>答案</h2>
+        <div class="badges">
+          <span id="route-badge" class="badge"></span>
+          <span id="time-badge" class="badge ghost"></span>
+        </div>
+      </div>
+      <div id="answer" class="answer"></div>
+      <div id="clarify" class="clarify hidden"></div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>推理链路</h3>
+        <ol id="steps" class="steps"></ol>
+      </div>
+
+      <div class="panel">
+        <h3>执行证据</h3>
+        <div id="sql-box" class="sql-box hidden">
+          <div class="mini-head"><span>生成的 SQL</span><span id="sql-stat"></span></div>
+          <pre id="sql"></pre>
+          <div id="rows"></div>
+        </div>
+        <div id="src-box" class="hidden">
+          <div class="mini-head"><span>检索片段</span><span id="src-count"></span></div>
+          <div id="sources"></div>
+        </div>
+        <p id="no-evidence" class="muted">本次问答没有使用 SQL 或检索证据。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>答案由大模型基于上述证据生成，可点击「推理链路 / 执行证据」核对来源。统计口径：结构化数据来自 Chinook 数据库快照，文档来自本地知识库。</p>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

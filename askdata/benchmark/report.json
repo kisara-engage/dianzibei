@@ -1,0 +1,376 @@
+{
+  "nl2sql": {
+    "passed": 12,
+    "total": 12,
+    "rate": 1.0
+  },
+  "rag": {
+    "passed": 12,
+    "total": 12,
+    "rate": 1.0
+  },
+  "hybrid": {
+    "passed": 4,
+    "total": 4,
+    "rate": 1.0
+  },
+  "total_seconds": 241.9,
+  "details": {
+    "nl2sql": [
+      {
+        "id": "sql-01",
+        "tag": "单表计数",
+        "q": "数据库里一共有多少首歌曲？",
+        "ok": true,
+        "expect": "3503",
+        "note": "",
+        "sql": "SELECT COUNT(*) FROM Track",
+        "route": "db",
+        "elapsed": 5.82
+      },
+      {
+        "id": "sql-02",
+        "tag": "单表计数",
+        "q": "平台上一共有多少位艺人？",
+        "ok": true,
+        "expect": "275",
+        "note": "",
+        "sql": "SELECT COUNT(*) FROM Artist",
+        "route": "db",
+        "elapsed": 5.51
+      },
+      {
+        "id": "sql-03",
+        "tag": "单表计数",
+        "q": "一共收录了多少张专辑？",
+        "ok": true,
+        "expect": "347",
+        "note": "",
+        "sql": "SELECT COUNT(*) FROM Album",
+        "route": "db",
+        "elapsed": 15.63
+      },
+      {
+        "id": "sql-04",
+        "tag": "单表计数",
+        "q": "一共有多少家注册客户？",
+        "ok": true,
+        "expect": "59",
+        "note": "",
+        "sql": "SELECT COUNT(*) FROM Customer",
+        "route": "db",
+        "elapsed": 4.6
+      },
+      {
+        "id": "sql-05",
+        "tag": "聚合排序",
+        "q": "哪个音乐流派的歌曲数量最多？",
+        "ok": true,
+        "expect": "Rock",
+        "note": "",
+        "sql": "SELECT Genre.Name FROM Genre JOIN Track ON Genre.GenreId = Track.GenreId GROUP BY Genre.GenreId, Genre.Name ORDER BY COUNT(Track.TrackId) DESC LIMIT 1",
+        "route": "db",
+        "elapsed": 4.77
+      },
+      {
+        "id": "sql-06",
+        "tag": "聚合排序 limit",
+        "q": "曲目数量排名前三的音乐流派分别是什么？",
+        "ok": true,
+        "expect": "Rock, Latin, Metal",
+        "note": "",
+        "sql": "SELECT g.Name AS 音乐流派, COUNT(t.TrackId) AS 曲目数量 FROM Genre g JOIN Track t ON g.GenreId = t.GenreId GROUP BY g.GenreId, g.Name ORDER BY COUNT(t.TrackId) DESC LIMIT 3",
+        "route": "db",
+        "elapsed": 4.94
+      },
+      {
+        "id": "sql-07",
+        "tag": "多表聚合",
+        "q": "按发票金额统计，销售额最高的三个国家是哪些？",
+        "ok": true,
+        "expect": "USA, Canada, France",
+        "note": "",
+        "sql": "SELECT BillingCountry, SUM(Total) AS Sales FROM Invoice GROUP BY BillingCountry ORDER BY Sales DESC LIMIT 3",
+        "route": "db",
+        "elapsed": 4.67
+      },
+      {
+        "id": "sql-08",
+        "tag": "两表关联聚合",
+        "q": "销量（售出曲目数量）最高的艺人是哪一位？",
+        "ok": true,
+        "expect": "Iron Maiden",
+        "note": "",
+        "sql": "SELECT Artist.Name\nFROM Artist\nJOIN Album ON Album.ArtistId = Artist.ArtistId\nJOIN Track ON Track.AlbumId = Album.AlbumId\nJOIN InvoiceLine ON InvoiceLine.TrackId = Track.TrackId\nGROUP BY Artist.Artist",
+        "route": "db",
+        "elapsed": 5.13
+      },
+      {
+        "id": "sql-09",
+        "tag": "条件筛选",
+        "q": "2024年开出了多少张发票？",
+        "ok": true,
+        "expect": "83",
+        "note": "",
+        "sql": "SELECT COUNT(*) FROM Invoice WHERE strftime('%Y', InvoiceDate) = '2024'",
+        "route": "db",
+        "elapsed": 6.16
+      },
+      {
+        "id": "sql-10",
+        "tag": "条件聚合",
+        "q": "2024年的总销售额是多少？",
+        "ok": true,
+        "expect": "477.53",
+        "note": "",
+        "sql": "SELECT SUM(Total) FROM Invoice WHERE InvoiceDate >= '2024-01-01 00:00:00' AND InvoiceDate < '2025-01-01 00:00:00'",
+        "route": "db",
+        "elapsed": 4.32
+      },
+      {
+        "id": "sql-11",
+        "tag": "多表关联+分组",
+        "q": "2024年销售额最高的客户支持专员是谁？",
+        "ok": true,
+        "expect": "Margaret Park",
+        "note": "",
+        "sql": "SELECT e.FirstName || ' ' || e.LastName AS SupportRepName\nFROM Invoice i\nJOIN Customer c ON i.CustomerId = c.CustomerId\nJOIN Employee e ON c.SupportRepId = e.EmployeeId\nWHERE i.InvoiceDate >= '2024-01",
+        "route": "db",
+        "elapsed": 9.29
+      },
+      {
+        "id": "sql-12",
+        "tag": "单表聚合",
+        "q": "平台历史累计总销售额是多少？",
+        "ok": true,
+        "expect": "2328.6",
+        "note": "",
+        "sql": "SELECT SUM(Total) FROM Invoice",
+        "route": "hybrid",
+        "elapsed": 27.11
+      }
+    ],
+    "rag": [
+      {
+        "id": "rag-01",
+        "tag": "制度条款",
+        "q": "P0级故障的响应时效要求是多少？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "04-客户服务章程",
+          "03-销售冠军方法论",
+          "08-2025年市场分析报告"
+        ],
+        "route": "kb",
+        "elapsed": 4.61,
+        "answer": "P0 级故障（平台不可用）要求：15 分钟内响应，4 小时内恢复。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-02",
+        "tag": "制度条款",
+        "q": "P1级故障多长时间内要恢复？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "04-客户服务章程"
+        ],
+        "route": "kb",
+        "elapsed": 4.76,
+        "answer": "P1 级故障需在 **8 小时内恢复**。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-03",
+        "tag": "实体检索",
+        "q": "2024年公司的销售冠军是谁？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "03-销售冠军方法论",
+          "03-销售冠军方法论",
+          "02-2024年度销售报告"
+        ],
+        "route": "db",
+        "elapsed": 13.88,
+        "answer": "2024年公司的销售冠军是 **Margaret Park**。\n\n依据：片段1、片段3"
+      },
+      {
+        "id": "rag-04",
+        "tag": "方法总结",
+        "q": "销售冠军的核心方法论叫什么？包含哪几步？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "03-销售冠军方法论",
+          "03-销售冠军方法论",
+          "05-数据安全管理制度"
+        ],
+        "route": "kb",
+        "elapsed": 5.04,
+        "answer": "销售冠军 Margaret Park 的核心方法论叫“三步破冰法”，包含三步：  \n1. 客户画像先行  \n2. 用最小可用推荐切入  \n3. 把商品语言翻译成使用场景  \n\n依据：片段1、片段2"
+      },
+      {
+        "id": "rag-05",
+        "tag": "制度条款",
+        "q": "公司的数据分成几个级别？",
+        "ok": true,
+        "note": "（答案用词与预期不同：['4 个级别', '4个级别', '四级', '4 级', '4级']，但文档命中正确）",
+        "docs": [
+          "05-数据安全管理制度",
+          "11-多模态数据平台建设纪要",
+          "08-2025年市场分析报告"
+        ],
+        "route": "kb",
+        "elapsed": 4.87,
+        "answer": "公司数据分为 **四个级别**：L1 公开数据、L2 内部数据、L3 敏感数据、L4 核心数据。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-06",
+        "tag": "技术规范",
+        "q": "L4核心数据的加密标准是什么？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "05-数据安全管理制度",
+          "03-销售冠军方法论",
+          "09-数据质量管理办法"
+        ],
+        "route": "kb",
+        "elapsed": 3.88,
+        "answer": "L4 核心数据在传输和存储环节均须加密：传输使用 TLS 1.3，存储使用 AES-256。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-07",
+        "tag": "技术规范",
+        "q": "单元测试覆盖率要求不低于多少？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "06-研发流程规范",
+          "04-客户服务章程",
+          "08-2025年市场分析报告"
+        ],
+        "route": "kb",
+        "elapsed": 3.81,
+        "answer": "结论：单元测试覆盖率要求不低于 **70%**。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-08",
+        "tag": "商务信息",
+        "q": "智能问数分析助手的起步套餐多少钱？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "07-产品定价说明",
+          "01-公司简介",
+          "08-2025年市场分析报告"
+        ],
+        "route": "kb",
+        "elapsed": 4.7,
+        "answer": "智能问数分析助手的起步套餐为：年费 12 万元，含 10 万次问答调用。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-09",
+        "tag": "指标查询",
+        "q": "2024年公司的平均数据质量分是多少？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "09-数据质量管理办法",
+          "02-2024年度销售报告",
+          "11-多模态数据平台建设纪要"
+        ],
+        "route": "kb",
+        "elapsed": 4.59,
+        "answer": "2024年公司的平均数据质量分是 **91.3 分**。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-10",
+        "tag": "制度条款",
+        "q": "申请T4及以上晋升需要经过什么评审？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "10-员工培训与晋升",
+          "05-数据安全管理制度",
+          "06-研发流程规范"
+        ],
+        "route": "kb",
+        "elapsed": 5.43,
+        "answer": "申请 T4 及以上晋升须通过**技术委员会答辩**。评审维度包括：项目贡献、技术深度、影响力与协作能力。晋升评审每年 4 月和 10 月各进行一次。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-11",
+        "tag": "要点罗列",
+        "q": "平台建设遇到的难点有哪些？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "11-多模态数据平台建设纪要",
+          "03-销售冠军方法论",
+          "11-多模态数据平台建设纪要"
+        ],
+        "route": "kb",
+        "elapsed": 4.74,
+        "answer": "平台建设遇到的难点有：\n1. 扫描件 OCR 质量参差不齐，部分文档识别错误率超过 10%。\n2. 复杂表格与公式解析困难，尤其是嵌套表格与跨页表格。\n3. 文档目录层级混乱，切片后语义完整性受损。\n\n依据：片段1"
+      },
+      {
+        "id": "rag-12",
+        "tag": "指标查询",
+        "q": "2024年客户满意度全年平均是多少？",
+        "ok": true,
+        "note": "",
+        "docs": [
+          "04-客户服务章程",
+          "02-2024年度销售报告",
+          "03-销售冠军方法论"
+        ],
+        "route": "kb",
+        "elapsed": 5.37,
+        "answer": "2024年客户满意度全年平均为 **95.7%**。\n\n依据：片段1"
+      }
+    ],
+    "hybrid": [
+      {
+        "id": "hy-01",
+        "tag": "跨源多跳",
+        "q": "2024年销售冠军是谁？请结合知识库总结他的成功方法论。",
+        "ok": true,
+        "route": "hybrid",
+        "missed": [],
+        "elapsed": 18.6,
+        "answer": "结论：2024 年销售冠军是 **Margaret Park**，她是公司客户支持专员，2024 年开出 29 张发票，销售额 197.2，位列第一。\n\n她的成功方法论可总结为：\n1. **三步破冰法**  \n   - 客户画像先行：先梳理客户历史购买记录与偏好音乐体裁，明确客户真正需要什么。  \n   - 最小可用推荐切入：先推荐试听成本低的专辑试点，客户满意后再推荐同艺人其他专辑，提升客单价。  \n   - 把商品语言翻译成使用场景"
+      },
+      {
+        "id": "hy-02",
+        "tag": "跨源拼接",
+        "q": "公司目前有多少家客户？客户服务的响应时效是怎么规定的？",
+        "ok": true,
+        "route": "hybrid",
+        "missed": [],
+        "elapsed": 22.0,
+        "answer": "结论：公司目前有 **59 家客户**。\n\n客户服务响应时效规定为：\n- **P0 级故障（平台不可用）**：15 分钟内响应，4 小时内恢复；\n- **P1 级故障（核心功能受损）**：30 分钟内响应，8 小时内恢复；\n- **P2 级问题（一般咨询）**：2 小时内响应，3 个工作日内解决。\n\n说明：数据库查询结果中“客户服务响应时效规定”显示“无相关数据”，但资料片段1中有上述具体规定。\n\n依据：片段1、片段2、片段4；结构化数"
+      },
+      {
+        "id": "hy-03",
+        "tag": "跨源拼接",
+        "q": "哪个艺人销量最高？公司的数据安全对这类销售数据有什么保护要求？",
+        "ok": true,
+        "route": "hybrid",
+        "missed": [],
+        "elapsed": 14.71,
+        "answer": "结论：销量最高的艺人是 **Iron Maiden**。  \n对这类销售数据（如销售明细）的保护要求：属于 **L3 敏感数据**，需审批授权；访问遵循最小权限原则，执行申请、审批、留痕三步流程，授权有效期最长 90 天，到期自动回收；传输使用 TLS 1.3，存储使用 AES-256 加密；所有访问须审计并记录操作人、时间、操作类型与访问对象，日志保留不少于 180 天；违规访问或泄露视情节给予警告、记过、解除劳动合同，涉嫌违法移交司"
+      },
+      {
+        "id": "hy-04",
+        "tag": "跨源对比",
+        "q": "2024年开出了多少张发票？同期市场分析报告预计2025年增长多少？",
+        "ok": true,
+        "route": "hybrid",
+        "missed": [],
+        "elapsed": 22.94,
+        "answer": "2024年开出发票 **83 张**。  \n市场分析报告预计：2025 年市场规模同比增长 **22.5%**；同时预计公司 2025 年营业收入同比增长约 **29%**。\n\n依据：片段2、片段1"
+      }
+    ]
+  }
+}

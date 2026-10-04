@@ -1,0 +1,28 @@
+﻿# 大模型配置
+#
+# 【重要】把下面的 api_key 换成你自己的密钥，改完保存即可。
+# 没改这个文件之前，程序启动会提示你填。
+#
+# 三种可用的服务（任选其一，都是 OpenAI 兼容接口）：
+#
+# ── 方式一：DeepSeek（推荐，中文好、便宜，充 10 元能用很久）
+#     申请地址：https://platform.deepseek.com/
+#     base_url: https://api.deepseek.com/v1
+#     default:  deepseek-chat
+#
+# ── 方式二：智谱 GLM（glm-4-flash 免费）
+#     申请地址：https://open.bigmodel.cn/
+#     base_url: https://open.bigmodel.cn/api/paas/v4
+#     default:  glm-4-flash
+#
+# ── 方式三：阿里通义千问
+#     申请地址：https://dashscope.console.aliyun.com/
+#     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+#     default:  qwen-plus
+#
+# 只改冒号后面的值，不要动缩进和前缀。
+
+model:
+  base_url: https://api.deepseek.com/v1
+  api_key: sk-414757bc6ff44440998d6bc91d163836
+  default: deepseek-chat
